@@ -1,0 +1,10 @@
+<h1> {{ name }}</h1>
+<p>
+  NgxMatSelectSearch & MatSelectInfiniteScroll
+</p>
+<app-select 
+    [data]="data$" 
+    [value]="select.value"
+    (changeValue)="valueChanged($event)"
+    (changeSearch)="searchChanged($event)">
+</app-select>
