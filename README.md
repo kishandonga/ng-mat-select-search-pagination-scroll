@@ -1,3 +1,3 @@
-# ng-mat-select-search-pagination-scroll
+# Angular material mat-select with Search and Pagination Scroll
 
 [Edit on StackBlitz ⚡️](https://stackblitz.com/edit/mat-select-search-with-infinity-scroll-mwrbjg)
