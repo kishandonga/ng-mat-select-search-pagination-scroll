@@ -1,0 +1,20 @@
+<form action= "" [formGroup]="filterForm">
+  <mat-form-field>
+    <mat-label *ngIf="fieldLabel">
+      {{ fieldLabel }}
+    </mat-label>
+    <mat-select formControlName="dropDown" msInfiniteScroll (infiniteScroll)="getData()" (blur)="onTouched()" [placeholder]="placeholder"
+      [required]="isFieldRequired" (valueChange)="generateDpResult($event)">
+      <mat-option>
+        <ngx-mat-select-search formControlName="searchString" placeholderLabel="Search" noEntriesFoundLabel="No data found">
+        </ngx-mat-select-search>
+      </mat-option>
+      <mat-option *ngFor="let option of options$ | async" [value]="option[optionViewKey]">
+        {{ option[optionViewKey] }}
+      </mat-option>
+      <mat-option *ngIf="isDataLoading">
+        <mat-spinner mode="indeterminate" style="margin:0 auto;" [diameter]="30"></mat-spinner>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>
