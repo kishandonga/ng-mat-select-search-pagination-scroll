@@ -5,26 +5,25 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AppComponent } from './app.component';
-import { SelectComponent } from './select/select.component';
-import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
-import {MatSelectInfiniteScrollModule} from 'ng-mat-select-infinite-scroll';
-
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MatSelectInfiniteScrollModule } from 'ng-mat-select-infinite-scroll';
+import { DropdownComponent } from './dropdown/dropdown.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
-  imports: [ 
-    BrowserModule, 
+  imports: [
+    BrowserModule,
     BrowserAnimationsModule,
-    FormsModule, 
+    FormsModule,
     ReactiveFormsModule,
-    MatSelectModule, 
+    MatSelectModule,
+    MatProgressSpinnerModule,
     MatFormFieldModule,
     NgxMatSelectSearchModule,
-    MatSelectInfiniteScrollModule
+    MatSelectInfiniteScrollModule,
   ],
-  exports: [
-    
-  ],
-  declarations: [ AppComponent, SelectComponent ],
-  bootstrap:    [ AppComponent ]
+  exports: [],
+  declarations: [AppComponent, DropdownComponent],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

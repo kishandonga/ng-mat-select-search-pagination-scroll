@@ -11,11 +11,11 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { scan } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-select',
-  templateUrl: './select.component.html',
-  styleUrls: ['./select.component.css'],
+  selector: 'app-dropdown',
+  templateUrl: './dropdown.component.html',
+  styleUrls: ['./dropdown.component.css'],
 })
-export class SelectComponent implements OnInit {
+export class DropdownComponent implements OnInit {
   @Input('data') data$;
   @Input() value;
   @Output() changeValue = new EventEmitter();
