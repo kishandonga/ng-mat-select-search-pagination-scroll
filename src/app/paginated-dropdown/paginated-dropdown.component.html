@@ -3,7 +3,7 @@
     <mat-label *ngIf="fieldLabel">
       {{ fieldLabel }}
     </mat-label>
-    <mat-select formControlName="dropDown" msInfiniteScroll (infiniteScroll)="getData()" (blur)="onTouched()" [placeholder]="placeholder"
+    <mat-select msInfiniteScroll (infiniteScroll)="getData()" (blur)="onTouched()" [placeholder]="placeholder"
       [required]="isFieldRequired" (valueChange)="generateDpResult($event)">
       <mat-option>
         <ngx-mat-select-search formControlName="searchString" placeholderLabel="Search" noEntriesFoundLabel="No data found">

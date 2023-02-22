@@ -1,0 +1,6 @@
+<ng-select [(ngModel)]="selectItem" [loading]="isDataLoading"
+    placeholder="Ng Select" (scrollToEnd)="fetchMore()"> 
+    <ng-option *ngFor="let option of options$ | async" [value]="option[optionViewKey]">
+        {{ option[optionViewKey] }}
+    </ng-option>
+</ng-select>

@@ -19,13 +19,15 @@ export class PaginatedDropdownComponent implements ControlValueAccessor, OnInit,
   @Input() placeholder: string;
   @Input() outputPattern: any[] = [];
   @Input() optionViewKey: string = 'name'
-  @Output() changeEvent = new EventEmitter<any>()
+  @Output() changeEvent = new EventEmitter<any>();
+  @Input() initValue: string;
 
   filterForm!: FormGroup;
   onDestroy = new Subject<void>();
 
   options = new BehaviorSubject<any[]>([]);
   options$: Observable<any>;
+  data = <any>[];
 
   initialValue: string;
   isFieldDisabled: boolean = false;
@@ -51,7 +53,6 @@ export class PaginatedDropdownComponent implements ControlValueAccessor, OnInit,
       limit: new FormControl(this.limit),
       skip: new FormControl(0),
       searchString: new FormControl(''),
-      dropDown: new FormControl(),
     });
 
     this.observableArray();
@@ -75,7 +76,7 @@ export class PaginatedDropdownComponent implements ControlValueAccessor, OnInit,
     if (!formValue) {
       return
     }
-    this.filterForm.patchValue({ dropDown: formValue });
+    //this.initValue = formValue;
   }
 
   registerOnChange(fn: any): void {
@@ -105,6 +106,7 @@ export class PaginatedDropdownComponent implements ControlValueAccessor, OnInit,
       .subscribe(async (_value) => {
         if (!this.isDataLoading) {
           this.options.next(['clear']);
+          this.data = [];
           this.totalPages = 0;
           this.currentPage = 1;
           this.filterForm.patchValue({ 'skip': 0 });
@@ -120,14 +122,14 @@ export class PaginatedDropdownComponent implements ControlValueAccessor, OnInit,
     this.onDestroy.complete();
   }
 
-  generateDpResult(value: any) {
+  async generateDpResult(value: any) {
 
     if (!this.outputPattern.length) {
       this.submitResult(value);
       return;
     }
 
-    const [selected] = this.options.getValue().filter((el: any) => el[this.optionViewKey] === value);
+    const [selected] = this.data.filter((el: any) => el[this.optionViewKey] === value);
     this.onTouched();
 
     if (this.outputPattern.length == 1 && this.outputPattern[0] === 'object') {
@@ -162,6 +164,7 @@ export class PaginatedDropdownComponent implements ControlValueAccessor, OnInit,
     try {
       this.isDataLoading = true;
       var response = await this.callApi(this.filterForm.value);
+      this.data = [...this.data, ...response.data];
       this.options.next(response.data);
       let totalItems = response.count ?? 0;
       this.totalPages = Math.ceil(totalItems / this.limit);
@@ -177,9 +180,5 @@ export class PaginatedDropdownComponent implements ControlValueAccessor, OnInit,
 
   callApi(params: any): Promise<any> {
     return lastValueFrom(this.http.get<any>(this.url, { params: params }));
-  }
-
-  delay(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

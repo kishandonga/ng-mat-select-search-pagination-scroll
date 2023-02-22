@@ -7,11 +7,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { MatSelectInfiniteScrollModule } from 'ng-mat-select-infinite-scroll';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { AppComponent } from './app.component';
 import { INTERCEPTOR_PROVIDER } from './interceptors';
 import { PaginatedDropdownComponent } from './paginated-dropdown/paginated-dropdown.component';
+import { NgSelectDropdownComponent } from './ng-select-dropdown/ng-select-dropdown.component';
 
 @NgModule({
   imports: [
@@ -22,17 +24,19 @@ import { PaginatedDropdownComponent } from './paginated-dropdown/paginated-dropd
     MatSelectModule,
     MatProgressSpinnerModule,
     MatFormFieldModule,
+    NgSelectModule,
     NgxMatSelectSearchModule,
     MatSelectInfiniteScrollModule,
     MatSnackBarModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [
     INTERCEPTOR_PROVIDER
   ],
   declarations: [
     AppComponent,
-    PaginatedDropdownComponent
+    PaginatedDropdownComponent,
+    NgSelectDropdownComponent
   ],
   bootstrap: [AppComponent],
 })

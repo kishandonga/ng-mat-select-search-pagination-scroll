@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
 
   initForm() {
     this.form = this.formBuilder.group({
-      dropDown: new FormControl('Kishan11')
+      dropDown: new FormControl('')
     });
   }
 
