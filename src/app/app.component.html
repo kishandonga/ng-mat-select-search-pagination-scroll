@@ -5,6 +5,14 @@
     [fieldLabel]="'DropDown'" optionViewKey="name" [outputPattern]="['id', 'name']">
   </app-paginated-dropdown>
   <br />
+
+  <app-ng-select-dropdown formControlName="ngDropDown" [url]="'https://ucreate-api-dev.nunoerin.com/client'"
+  [fieldLabel]="'DropDown'" optionViewKey="name" [outputPattern]="['id', 'name']"></app-ng-select-dropdown>
+
+  <mat-error *ngIf="f.ngDropDown.invalid && (f.ngDropDown.dirty || f.ngDropDown.touched || showValidation)">
+    <div *ngIf="f.ngDropDown.errors?.required">ngDropDown is required</div>
+  </mat-error>
+
   <button type="submit">Submit Value</button>
 </form>
 
@@ -14,4 +22,3 @@
 <p>{{formValue}}</p>
 
 
-<app-ng-select-dropdown></app-ng-select-dropdown>

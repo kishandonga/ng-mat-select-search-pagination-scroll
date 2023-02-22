@@ -29,7 +29,6 @@ export class PaginatedDropdownComponent implements ControlValueAccessor, OnInit,
   options$: Observable<any>;
   data = <any>[];
 
-  initialValue: string;
   isFieldDisabled: boolean = false;
   isFieldRequired: boolean = false;
 

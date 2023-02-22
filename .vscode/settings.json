@@ -1,7 +1,8 @@
 {
     "cSpell.words": [
         "devkit",
-        "titlecase"
+        "titlecase",
+        "typeahead"
     ],
     "editor.rename.enablePreview": false,
 }

@@ -1,5 +1,5 @@
-<ng-select [(ngModel)]="selectItem" [loading]="isDataLoading" [typeahead]="input$"
-    placeholder="Ng Select" (scrollToEnd)="fetchMore()"> 
+<ng-select [clearable]="false" [hideSelected]="true" [(ngModel)]="selectItem" [loading]="isDataLoading" [typeahead]="input$" [disabled]="isFieldDisabled"
+    placeholder="Ng Select" (scrollToEnd)="fetchMore()" (change)="changeValues()"> 
     <ng-option *ngFor="let option of options$ | async" [value]="option[optionViewKey]">
         {{ option[optionViewKey] }}
     </ng-option>
