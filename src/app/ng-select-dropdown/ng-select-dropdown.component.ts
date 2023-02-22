@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, lastValueFrom, Observable, scan, Subject } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, lastValueFrom, Observable, scan, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-ng-select-dropdown',
@@ -9,16 +9,11 @@ import { BehaviorSubject, debounceTime, distinctUntilChanged, lastValueFrom, Obs
 })
 export class NgSelectDropdownComponent implements OnInit, OnDestroy {
 
-  photos = [];
-  photosBuffer = [];
-  bufferSize = 50;
-  loading = false;
-  input$ = new Subject<string>();
-
   @Input() optionViewKey: string = 'name'
 
   onDestroy = new Subject<void>();
 
+  input$ = new Subject<string>();
   options = new BehaviorSubject<any[]>([]);
   options$: Observable<any>;
   data = <any>[];
@@ -31,17 +26,13 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy {
   isDataLoading: boolean = false;
   filterForm: any;
 
-  userQuestionUpdate = new Subject<string>();
-
 
   constructor(private http: HttpClient) {
     this.observableArray();
 
-    this.userQuestionUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        console.log(value);
+    this.input$.pipe(takeUntil(this.onDestroy), debounceTime(500), distinctUntilChanged(),)
+      .subscribe((data) => {
+        this.onSearch(data);
       });
   }
 
@@ -74,8 +65,14 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy {
     this.onDestroy.complete();
   }
 
-  onSearch(term: string) {
-    this.userQuestionUpdate.next(term);
+  async onSearch(term: string) {
+    this.options.next(['clear']);
+    this.data = [];
+    this.totalPages = 0;
+    this.currentPage = 1;
+    this.filterForm.searchString = term;
+    this.filterForm.skip = 0;
+    await this.getApiData();
   }
 
   async fetchMore() {
