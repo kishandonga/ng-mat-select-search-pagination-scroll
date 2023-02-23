@@ -11,7 +11,6 @@ import { BehaviorSubject, debounceTime, distinctUntilChanged, lastValueFrom, Obs
 export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
   @Input() url: string;
-  @Input() fieldLabel: string;
   @Input() placeholder: string;
   @Input() outputPattern: any[] = [];
   @Input() optionViewKey: string = 'name'
@@ -30,7 +29,6 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   totalPages = 0;
   currentPage = 1;
   limit = 10;
-  paginationData: any;
   isDataLoading: boolean = false;
   filterForm: any;
 
@@ -43,10 +41,17 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     this.control && (this.control.valueAccessor = this);
     this.observableArray();
 
-    this.input$.pipe(takeUntil(this.onDestroy), debounceTime(500), distinctUntilChanged(),)
+    this.input$.pipe(takeUntil(this.onDestroy), debounceTime(500), distinctUntilChanged())
       .subscribe((search) => {
         this.onSearch(search);
       });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy.next();
+    this.onDestroy.complete();
+    this.input$.unsubscribe();
+    this.options.unsubscribe();
   }
 
   writeValue(formValue: any): void {
@@ -114,7 +119,7 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   async preLoading() {
     if (this.initValueId) {
       await this.getApiDataById();
-      const selected = this.data.find((el: any) => el['id'] === this.initValueId);
+      const selected = this.data.find((el: any) => el.id === this.initValueId);
       this.selectItem = selected[this.optionViewKey]
       this.changeValues();
     }
@@ -122,15 +127,9 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     await this.getApiData();
   }
 
-  ngOnDestroy(): void {
-    this.onDestroy.next();
-    this.onDestroy.complete();
-    this.input$.complete();
-  }
-
   async onSearch(term: string) {
-    this.options.next(['clear']);
     this.data = [];
+    this.options.next(this.data);
     this.totalPages = 0;
     this.currentPage = 1;
     this.filterForm.searchString = term ?? '';

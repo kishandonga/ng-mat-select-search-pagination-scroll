@@ -7,7 +7,7 @@
   <br />
 
   <app-ng-select-dropdown formControlName="ngDropDown" [url]="'https://ucreate-api-dev.nunoerin.com/client'"
-  [fieldLabel]="'DropDown'" optionViewKey="name" [outputPattern]="['id', 'name']"></app-ng-select-dropdown>
+  optionViewKey="name" [outputPattern]="['id', 'name']"></app-ng-select-dropdown>
 
   <mat-error *ngIf="f.ngDropDown.invalid && (f.ngDropDown.dirty || f.ngDropDown.touched || showValidation)">
     <div *ngIf="f.ngDropDown.errors?.required">ngDropDown is required</div>
