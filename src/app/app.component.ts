@@ -21,9 +21,19 @@ export class AppComponent implements OnInit {
   }
 
   initForm() {
+
+    let value = {
+      "name": "Kishan11",
+      "address": "string",
+      "contactNumber": "1234567",
+      "emailAddress": "fff@d.com",
+      "createdAt": "2023-02-21T14:17:28.837Z",
+      "id": "63f4d278a3d21044f4c753f1"
+    };
+
     this.form = this.formBuilder.group({
       dropDown: new FormControl(''),
-      ngDropDown: new FormControl('63f4d278a3d21044f4c753f1', [Validators.required])
+      ngDropDown: new FormControl(value, [Validators.required])
     });
   }
 

@@ -1,9 +1,9 @@
 <h1>{{ name }}</h1>
 <p>NgxMatSelectSearch & MatSelectInfiniteScroll</p>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <app-paginated-dropdown formControlName="dropDown" [url]="'https://ucreate-api-dev.nunoerin.com/client'"
+  <!-- <app-paginated-dropdown formControlName="dropDown" [url]="'https://ucreate-api-dev.nunoerin.com/client'"
     [fieldLabel]="'DropDown'" optionViewKey="name" [outputPattern]="['id', 'name']">
-  </app-paginated-dropdown>
+  </app-paginated-dropdown> -->
   <br />
 
   <app-ng-select-dropdown formControlName="ngDropDown" [url]="'https://ucreate-api-dev.nunoerin.com/client'"

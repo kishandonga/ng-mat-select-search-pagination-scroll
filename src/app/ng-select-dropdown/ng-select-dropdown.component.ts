@@ -14,7 +14,9 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   @Input() placeholder: string;
   @Input() outputPattern: any[] = [];
   @Input() optionViewKey: string = 'name'
+  @Input() uniqueKey: string = 'id'
   @Input() initValueId: string = '';
+  @Input() initValueObject: any;
   @Output() changeEvent = new EventEmitter<any>();
 
   onDestroy = new Subject<void>();
@@ -25,6 +27,7 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
 
   selectItem: any;
   isFieldDisabled: boolean = false;
+  valueType: ValueType = ValueType.noType;
 
   totalPages = 0;
   currentPage = 1;
@@ -58,7 +61,14 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     if (!formValue) {
       return
     }
-    this.initValueId = formValue ?? '';
+
+    if (typeof formValue === 'string') {
+      this.initValueId = formValue ?? '';
+      this.valueType = ValueType.hasStringValue;
+    } else {
+      this.initValueObject = formValue;
+      this.valueType = ValueType.hasObjectValue;
+    }
   }
 
   registerOnChange(fn: any): void {
@@ -117,11 +127,20 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   }
 
   async preLoading() {
-    if (this.initValueId) {
-      await this.getApiDataById();
-      const selected = this.data.find((el: any) => el.id === this.initValueId);
-      this.selectItem = selected[this.optionViewKey]
-      this.changeValues();
+    if (this.valueType == ValueType.hasStringValue) {
+      if (this.initValueId) {
+        await this.getApiDataById();
+        const selected = this.data.find((el: any) => el[this.uniqueKey] === this.initValueId);
+        this.selectItem = selected[this.optionViewKey]
+        this.changeValues();
+      }
+    } else if (this.valueType == ValueType.hasObjectValue) {
+      if (this.initValueObject) {
+        this.addToArray([this.initValueObject]);
+        this.options.next(this.data);
+        this.selectItem = this.initValueObject[this.optionViewKey]
+        this.changeValues();
+      }
     }
 
     await this.getApiData();
@@ -147,7 +166,7 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
 
   addToArray(values: any) {
     values.forEach((e: any) => {
-      const has = this.data.find((el: any) => el.id == e.id);
+      const has = this.data.find((el: any) => el[this.uniqueKey] == e[this.uniqueKey]);
       if (!has) {
         this.data.push(e);
       }
@@ -192,3 +211,5 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     return lastValueFrom(this.http.get<any>(this.url + '/' + this.initValueId));
   }
 }
+
+enum ValueType { noType, hasStringValue, hasObjectValue }
