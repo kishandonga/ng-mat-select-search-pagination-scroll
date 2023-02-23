@@ -31,9 +31,13 @@ export class AppComponent implements OnInit {
       "id": "63f4d278a3d21044f4c753f1"
     };
 
+
+    let multiValue = [{ "id": "63ea2dd7e3a5691a495b68a5", "name": "Simbiotik" }, { "id": "63f4d278a3d21044f4c753f1", "name": "Kishan11" }];
+
     this.form = this.formBuilder.group({
-      dropDown: new FormControl(''),
-      ngDropDown: new FormControl(value, [Validators.required])
+      matDropDown: new FormControl(''),
+      ngDropDown: new FormControl(value, [Validators.required]),
+      ngDropDownMulti: new FormControl(multiValue, [Validators.required])
     });
   }
 

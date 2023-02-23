@@ -14,7 +14,7 @@ import { AppComponent } from './app.component';
 import { INTERCEPTOR_PROVIDER } from './interceptors';
 import { PaginatedDropdownComponent } from './paginated-dropdown/paginated-dropdown.component';
 import { NgSelectDropdownComponent } from './ng-select-dropdown/ng-select-dropdown.component';
-import { NgMultiselectDrodownComponent } from './ng-multiselect-drodown/ng-multiselect-drodown.component';
+import { NgMultiselectDropdownComponent } from './ng-multiselect-dropdown/ng-multiselect-dropdown.component';
 
 @NgModule({
   imports: [
@@ -38,7 +38,7 @@ import { NgMultiselectDrodownComponent } from './ng-multiselect-drodown/ng-multi
     AppComponent,
     PaginatedDropdownComponent,
     NgSelectDropdownComponent,
-    NgMultiselectDrodownComponent
+    NgMultiselectDropdownComponent
   ],
   bootstrap: [AppComponent],
 })

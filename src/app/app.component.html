@@ -1,16 +1,22 @@
 <h1>{{ name }}</h1>
-<p>NgxMatSelectSearch & MatSelectInfiniteScroll</p>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <!-- <app-paginated-dropdown formControlName="dropDown" [url]="'https://ucreate-api-dev.nunoerin.com/client'"
+  <!-- <app-paginated-dropdown formControlName="matDropDown" [url]="'https://ucreate-api-dev.nunoerin.com/client'"
     [fieldLabel]="'DropDown'" optionViewKey="name" [outputPattern]="['id', 'name']">
   </app-paginated-dropdown> -->
   <br />
 
-  <app-ng-select-dropdown formControlName="ngDropDown" [url]="'https://ucreate-api-dev.nunoerin.com/client'"
-  optionViewKey="name" [outputPattern]="['id', 'name']"></app-ng-select-dropdown>
+  <app-ng-select-dropdown formControlName="ngDropDown" [url]="'https://ucreate-api-dev.nunoerin.com/client'" [uniqueKey]="'id'"
+  [bindLabel]="'name'" [outputPattern]="['id', 'name']"></app-ng-select-dropdown>
 
   <mat-error *ngIf="f.ngDropDown.invalid && (f.ngDropDown.dirty || f.ngDropDown.touched || showValidation)">
     <div *ngIf="f.ngDropDown.errors?.required">ngDropDown is required</div>
+  </mat-error>
+
+  <app-ng-multiselect-dropdown formControlName="ngDropDownMulti" [url]="'https://ucreate-api-dev.nunoerin.com/client'" [uniqueKey]="'id'"
+  [bindLabel]="'name'" [outputPattern]="['id', 'name']"></app-ng-multiselect-dropdown>
+
+  <mat-error *ngIf="f.ngDropDownMulti.invalid && (f.ngDropDownMulti.dirty || f.ngDropDownMulti.touched || showValidation)">
+    <div *ngIf="f.ngDropDownMulti.errors?.required">ngDropDown Multi is required</div>
   </mat-error>
 
   <button type="submit">Submit Value</button>
@@ -19,6 +25,6 @@
 <br />
 <br />
 
-<p>{{formValue}}</p>
+<pre>{{formValue}}</pre>
 
 

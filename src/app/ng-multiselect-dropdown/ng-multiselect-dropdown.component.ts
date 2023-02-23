@@ -4,20 +4,19 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, lastValueFrom, Observable, Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-ng-select-dropdown',
-  templateUrl: './ng-select-dropdown.component.html',
-  styleUrls: ['./ng-select-dropdown.component.css']
+  selector: 'app-ng-multiselect-dropdown',
+  templateUrl: './ng-multiselect-dropdown.component.html',
+  styleUrls: ['./ng-multiselect-dropdown.component.css']
 })
-export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class NgMultiselectDropdownComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
-  @Input() callBack: (args: string) => void;
   @Input() url: string;
   @Input() placeholder: string;
   @Input() outputPattern: any[] = [];
   @Input() bindLabel: string = 'name'
   @Input() uniqueKey: string = 'id'
-  @Input() initValueId: string = '';
-  @Input() initValueObject: any;
+  @Input() initIdArray: string[] = [];
+  @Input() initObjectArray: any[] = [];
   @Output() changeEvent = new EventEmitter<any>();
 
   onDestroy = new Subject<void>();
@@ -26,9 +25,10 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   options$: Observable<any>;
   data = <any>[];
 
-  selectItem: any;
+  multiple: boolean = true;
+  selectItem: any = [];
   isFieldDisabled: boolean = false;
-  valueType: ValueType = ValueType.noType;
+  valueType: ValueType = ValueType.noArrayType;
 
   totalPages = 0;
   currentPage = 1;
@@ -63,12 +63,19 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
       return
     }
 
-    if (typeof formValue === 'string') {
-      this.initValueId = formValue ?? '';
-      this.valueType = ValueType.hasStringValue;
-    } else {
-      this.initValueObject = formValue;
-      this.valueType = ValueType.hasObjectValue;
+    if (Array.isArray(formValue)) {
+      const isStringArray =
+        formValue.length > 0 &&
+        formValue.every((value) => {
+          return typeof value === 'string';
+        });
+      if (isStringArray) {
+        this.initIdArray = formValue ?? [];
+        this.valueType = ValueType.hasArrayOfString;
+      } else {
+        this.initObjectArray = formValue;
+        this.valueType = ValueType.hasArrayOfObject;
+      }
     }
   }
 
@@ -90,7 +97,12 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
       return;
     }
 
-    const [selected] = this.data.filter((el: any) => el[this.uniqueKey] === this.selectItem);
+    let selected = [];
+    this.selectItem.forEach((it: any) => {
+      let item = this.data.find((el: any) => el[this.uniqueKey] === it);
+      selected.push(item);
+    });
+
     this.onTouched();
 
     if (this.outputPattern.length == 1 && this.outputPattern[0] === 'object') {
@@ -98,12 +110,17 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
       return;
     }
 
-    const result: any = {}
-    this.outputPattern.forEach((pattern: string) => {
-      selected[pattern] && (result[pattern] = selected[pattern])
-    })
 
-    this.submitResult(result);
+    let resultArray = [];
+    selected.forEach((it) => {
+      let result: any = {};
+      this.outputPattern.forEach((pattern) => {
+        it[pattern] && (result[pattern] = it[pattern])
+      });
+      resultArray.push(result);
+    });
+
+    this.submitResult(resultArray);
   }
 
   submitResult(value: any) {
@@ -126,18 +143,17 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   }
 
   async preLoading() {
-    if (this.valueType == ValueType.hasStringValue) {
-      if (this.initValueId) {
+    if (this.valueType == ValueType.hasArrayOfString) {
+      if (this.initIdArray) {
         await this.getApiDataById();
-        const selected = this.data.find((el: any) => el[this.uniqueKey] === this.initValueId);
-        this.selectItem = selected[this.uniqueKey]
+        this.selectItem = this.initIdArray;
         this.changeValues();
       }
-    } else if (this.valueType == ValueType.hasObjectValue) {
-      if (this.initValueObject) {
-        this.addToArray([this.initValueObject]);
+    } else if (this.valueType == ValueType.hasArrayOfObject) {
+      if (this.initObjectArray) {
+        this.addToArray(this.initObjectArray);
         this.options.next(this.data);
-        this.selectItem = this.initValueObject[this.uniqueKey]
+        this.selectItem = this.initObjectArray.map((it) => it[this.uniqueKey]);
         this.changeValues();
       }
     }
@@ -192,8 +208,10 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   async getApiDataById() {
     try {
       this.isDataLoading = true;
-      var response = await this.callApiById();
-      this.addToArray([response]);
+      await this.asyncForEach(this.initIdArray, async (id: string, index: number) => {
+        var response = await this.callApiById(id);
+        this.addToArray([response]);
+      });
       this.options.next(this.data);
     } catch (error) {
       console.error(error);
@@ -206,9 +224,15 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     return lastValueFrom(this.http.get<any>(this.url, { params: params }));
   }
 
-  callApiById(): Promise<any> {
-    return lastValueFrom(this.http.get<any>(this.url + '/' + this.initValueId));
+  callApiById(id: string): Promise<any> {
+    return lastValueFrom(this.http.get<any>(this.url + '/' + id));
+  }
+
+  async asyncForEach(array: any, callback: any) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
   }
 }
 
-enum ValueType { noType, hasStringValue, hasObjectValue }
+enum ValueType { noArrayType, hasArrayOfString, hasArrayOfObject }
