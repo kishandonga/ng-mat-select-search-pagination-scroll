@@ -10,7 +10,6 @@ import { BehaviorSubject, debounceTime, distinctUntilChanged, lastValueFrom, Obs
 })
 export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
-  @Input() callBack: (args: string) => void;
   @Input() url: string;
   @Input() placeholder: string;
   @Input() outputPattern: any[] = [];
@@ -34,7 +33,7 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   currentPage = 1;
   limit = 10;
   isDataLoading: boolean = false;
-  filterForm: any;
+  reqParam: any;
 
   onChange = (value: any) => { }
 
@@ -66,7 +65,7 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     if (typeof formValue === 'string') {
       this.initValueId = formValue ?? '';
       this.valueType = ValueType.hasStringValue;
-    } else {
+    } else if (typeof formValue === 'object') {
       this.initValueObject = formValue;
       this.valueType = ValueType.hasObjectValue;
     }
@@ -116,7 +115,7 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   }
 
   ngOnInit() {
-    this.filterForm = {
+    this.reqParam = {
       limit: this.limit,
       skip: 0,
       searchString: ''
@@ -150,8 +149,8 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     this.options.next(this.data);
     this.totalPages = 0;
     this.currentPage = 1;
-    this.filterForm.searchString = term ?? '';
-    this.filterForm.skip = 0;
+    this.reqParam.searchString = term ?? '';
+    this.reqParam.skip = 0;
     await this.getApiData();
   }
 
@@ -175,13 +174,13 @@ export class NgSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   async getApiData() {
     try {
       this.isDataLoading = true;
-      var response = await this.callApi(this.filterForm);
+      var response = await this.callApi(this.reqParam);
       this.addToArray(response.data);
       this.options.next(this.data);
       let totalItems = response.count ?? 0;
       this.totalPages = Math.ceil(totalItems / this.limit);
       this.currentPage = this.currentPage + 1;
-      this.filterForm.skip = this.limit;
+      this.reqParam.skip = this.limit;
     } catch (error) {
       console.error(error);
     } finally {

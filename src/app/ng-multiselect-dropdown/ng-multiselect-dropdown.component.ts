@@ -34,7 +34,7 @@ export class NgMultiselectDropdownComponent implements OnInit, OnDestroy, Contro
   currentPage = 1;
   limit = 10;
   isDataLoading: boolean = false;
-  filterForm: any;
+  reqParam: any;
 
   onChange = (value: any) => { }
 
@@ -69,10 +69,19 @@ export class NgMultiselectDropdownComponent implements OnInit, OnDestroy, Contro
         formValue.every((value) => {
           return typeof value === 'string';
         });
+
       if (isStringArray) {
         this.initIdArray = formValue ?? [];
         this.valueType = ValueType.hasArrayOfString;
-      } else {
+      }
+
+      const isObjectArray =
+        formValue.length > 0 &&
+        formValue.every((value) => {
+          return typeof value === 'object';
+        });
+
+      if (isObjectArray) {
         this.initObjectArray = formValue;
         this.valueType = ValueType.hasArrayOfObject;
       }
@@ -133,7 +142,7 @@ export class NgMultiselectDropdownComponent implements OnInit, OnDestroy, Contro
   }
 
   ngOnInit() {
-    this.filterForm = {
+    this.reqParam = {
       limit: this.limit,
       skip: 0,
       searchString: ''
@@ -166,8 +175,8 @@ export class NgMultiselectDropdownComponent implements OnInit, OnDestroy, Contro
     this.options.next(this.data);
     this.totalPages = 0;
     this.currentPage = 1;
-    this.filterForm.searchString = term ?? '';
-    this.filterForm.skip = 0;
+    this.reqParam.searchString = term ?? '';
+    this.reqParam.skip = 0;
     await this.getApiData();
   }
 
@@ -191,13 +200,13 @@ export class NgMultiselectDropdownComponent implements OnInit, OnDestroy, Contro
   async getApiData() {
     try {
       this.isDataLoading = true;
-      var response = await this.callApi(this.filterForm);
+      var response = await this.callApi(this.reqParam);
       this.addToArray(response.data);
       this.options.next(this.data);
       let totalItems = response.count ?? 0;
       this.totalPages = Math.ceil(totalItems / this.limit);
       this.currentPage = this.currentPage + 1;
-      this.filterForm.skip = this.limit;
+      this.reqParam.skip = this.limit;
     } catch (error) {
       console.error(error);
     } finally {

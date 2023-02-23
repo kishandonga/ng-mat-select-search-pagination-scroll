@@ -22,7 +22,9 @@ export class AppComponent implements OnInit {
 
   initForm() {
 
-    let value = {
+    let value = '63f4d278a3d21044f4c753f1';
+
+    let valueObject = {
       "name": "Kishan11",
       "address": "string",
       "contactNumber": "1234567",
@@ -32,11 +34,13 @@ export class AppComponent implements OnInit {
     };
 
 
-    let multiValue = [{ "id": "63ea2dd7e3a5691a495b68a5", "name": "Simbiotik" }, { "id": "63f4d278a3d21044f4c753f1", "name": "Kishan11" }];
+    let multiValue = ["63ea2dd7e3a5691a495b68a5", "63f4d278a3d21044f4c753f1"];
+
+    let multiValueObject = [{ "id": "63ea2dd7e3a5691a495b68a5", "name": "Kishan11" }, { "id": "63f4d278a3d21044f4c753f1", "name": "Kishan3" }];
 
     this.form = this.formBuilder.group({
       matDropDown: new FormControl(''),
-      ngDropDown: new FormControl(value, [Validators.required]),
+      ngDropDown: new FormControl(valueObject, [Validators.required]),
       ngDropDownMulti: new FormControl(multiValue, [Validators.required])
     });
   }
@@ -46,16 +50,12 @@ export class AppComponent implements OnInit {
   }
 
   onSubmit() {
-
     if (this.form.invalid) {
       this.showValidation = true;
       return;
     }
     this.showValidation = false;
-
-
     this.formValue = JSON.stringify(this.form.value, null, 4);
   }
-
 
 }
